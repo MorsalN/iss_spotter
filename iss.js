@@ -11,7 +11,7 @@ const request = require('request');
 /* COMMENTED
  const URL1 = 'https://api.ipify.org?format=json';
 
- const fetchMyIP = function(callback) { 
+ const fetchMyIP = function(callback) {
    
   // use request to fetch IP address from JSON API
   request(URL1, (error, response, body) => {
@@ -34,7 +34,8 @@ const request = require('request');
       callback(null, ip)
   });
 };
-*/
+
+
 const fetchCoordsByIP = function(ip, callback) {
   const URL2 = `https://freegeoip.app/json/${ip}`;
     request(URL2, (error, response, body) => {
@@ -51,12 +52,38 @@ const fetchCoordsByIP = function(ip, callback) {
       return;
     }
       
-      const {latitude, longitude} = JSON.parse(body); 
+      const {latitude, longitude} = JSON.parse(body);
       callback(null, {latitude, longitude});
   });
 
 };
 
+*/
+
+const fetchISSFlyOverTimes = function(coordinates, callback) {
+  const URL3 = 'https://iss-pass.herokuapp.com/json/?lat=49.27670&lon=-123.1300';
+
+  request(URL3,(error, response, body) => {
+
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching risetime and duration. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+
+    const risetimeDuration = JSON.parse(body).response;
+    // console.log(risetimeDuration);
+    callback(null, risetimeDuration);
+
+  });
+};
+
 
 // module.exports = { fetchMyIP };
-module.exports = { fetchCoordsByIP };
+// module.exports = { fetchCoordsByIP };
+module.exports = { fetchISSFlyOverTimes };
